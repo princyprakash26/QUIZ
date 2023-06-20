@@ -1,9 +1,9 @@
-
 import random
 from string import ascii_lowercase
 
-NUM_QUESTIONS_PER_QUIZ = 5
-QUESTIONS = {
+class QUIZ:
+    NUM_QUESTIONS_PER_QUIZ = 5
+    QUESTIONS = {
     "When was the first known use of the word 'quiz'": [
         "1781",
         "1771",
@@ -64,51 +64,52 @@ QUESTIONS = {
         "When the file has a valid name",
         "When the file only has one function",
     ],
-}
+    }
 
 
-def run_quiz():
-    questions = prepare_questions(
-        QUESTIONS, num_questions=NUM_QUESTIONS_PER_QUIZ
-    )
+   
+  
 
-    num_correct = 0
-    for num, (question, alternatives) in enumerate(questions, start=1):
-        print(f"\nQuestion {num}:")
-        num_correct += ask_question(question, alternatives)
+    def quiz_run(self):
+        self.questions = self.prepare_questions(
+        self.QUESTIONS, num_questions=self.NUM_QUESTIONS_PER_QUIZ)
+        num_correct = 0
+        for num, (question, alternatives) in enumerate(self.questions, start=1):
+            print(f"\nQuestion {num}:")
+            num_correct += self.ask_question(question, alternatives)
 
-    print(f"\nYou got {num_correct} correct out of {num} questions")
+        print(f"\nYou got {num_correct} correct out of {num} questions")
 
+    def prepare_questions(self,questions, num_questions):
+        num_questions = min(num_questions, len(questions))
+        return random.sample(list(questions.items()), k=num_questions)
+    
+    def ask_question(self,question, alternatives):
+        correct_answer = alternatives[0]
+        ordered_alternatives = random.sample(alternatives, k=len(alternatives))
+        answer = self.get_answer(question, ordered_alternatives)
+        if answer == correct_answer:
+            print(" Correct! ")
+            return 1
+        else:
+            print(f"The answer is {correct_answer!r}, not {answer!r}")
+            return 0
+        
+    
+    def get_answer(self,question, alternatives):
+        print(f"{question}?")
+        labeled_alternatives = dict(zip(ascii_lowercase, alternatives))
+        for label, alternative in labeled_alternatives.items():
+            print(f"  {label}) {alternative}")
 
-def prepare_questions(questions, num_questions):
-    num_questions = min(num_questions, len(questions))
-    return random.sample(list(questions.items()), k=num_questions)
+        while (answer_label := input("\nChoice? ")) not in labeled_alternatives:
+            print(f"Please answer one of {', '.join(labeled_alternatives)}")
 
-
-def ask_question(question, alternatives):
-    correct_answer = alternatives[0]
-    ordered_alternatives = random.sample(alternatives, k=len(alternatives))
-
-    answer = get_answer(question, ordered_alternatives)
-    if answer == correct_answer:
-        print(" Correct! ")
-        return 1
-    else:
-        print(f"The answer is {correct_answer!r}, not {answer!r}")
-        return 0
-
-
-def get_answer(question, alternatives):
-    print(f"{question}?")
-    labeled_alternatives = dict(zip(ascii_lowercase, alternatives))
-    for label, alternative in labeled_alternatives.items():
-        print(f"  {label}) {alternative}")
-
-    while (answer_label := input("\nChoice? ")) not in labeled_alternatives:
-        print(f"Please answer one of {', '.join(labeled_alternatives)}")
-
-    return labeled_alternatives[answer_label]
+        return labeled_alternatives[answer_label]
 
 
-if __name__ == "__main__":
-    run_quiz()
+
+quiz = QUIZ()
+quiz.quiz_run()
+
+    
